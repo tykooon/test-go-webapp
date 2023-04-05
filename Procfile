@@ -1,1 +1,1 @@
-web: test-go-webapp
+web: web
