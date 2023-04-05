@@ -1,7 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"net/http"
+	"os"
 
 	"github.com/tykooon/test-go-webapp/pkg/usersys"
 )
@@ -13,6 +15,14 @@ func main() {
 		LastName:  "Tykoun",
 	}
 
-	fmt.Println(u1)
+	logger := log.New(os.Stdout, "APP LOG :", log.Lshortfile)
 
+	app := app{
+		user:      u1,
+		log:       logger,
+		templates: initTemplates(),
+	}
+
+	err := http.ListenAndServe(":5000", app.routes())
+	app.log.Fatal(err)
 }
