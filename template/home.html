@@ -1,7 +1,20 @@
 {{define "title"}}Homepage{{end}}
 {{define "scripts"}}{{end}}
 {{define "body"}}
-  <h2 class="my-3"> FirstName: {{.FirstName}}</h2>
-  <h2 class="my-3"> LastName: {{.LastName}}</h2>
+  <h2 class="my-3"> Messages</h2>
+  <ul>
+    {{range $i, $message := .}}
+      <li class="list-group-item">
+        <blockquote>
+          <p>
+            "{{$message.Content}}"
+          </p>
+          <cite>
+            from {{$message.AuthorId}} at {{ timeformat $message.CreatedAt}}
+          </cite>
+        </blockquote>   
+      </li>
+    {{end}}
+  </ul>
 </div>
 {{end}}

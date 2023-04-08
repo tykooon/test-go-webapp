@@ -4,12 +4,14 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/tykooon/test-go-webapp/pkg/messagedb"
 	"github.com/tykooon/test-go-webapp/pkg/usersys"
 )
 
 type app struct {
 	user      usersys.User
 	log       *log.Logger
+	messages  *messagedb.MessageDB
 	templates *templates
 }
 
