@@ -1,11 +1,11 @@
-package dbservice
+package dbprovider
 
 import (
 	"database/sql"
 )
 
 const (
-	ErrNoConnection = "No connection with database"
+	ERR_NO_CONNECTION = "No connection to database"
 )
 
 type DbProvider interface {

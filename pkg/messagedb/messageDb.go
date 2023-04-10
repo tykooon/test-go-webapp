@@ -50,17 +50,42 @@ func (m *MessageDB) GetAuthorById(id int64) *Author {
 func (m *MessageDB) GetMessageById(id int64) *Message {
 	message := &Message{id: id}
 	timeStr := ""
+	var authId int64
 	row := m.db.QueryRow(
 		`SELECT AuthorId, CreatedAt, Content
 		 FROM messages
 		 WHERE id =?`,
 		id)
-	if err := row.Scan(&message.AuthorId, &timeStr, &message.Content); err != nil {
-		//message.Content = err.Error()
-		return nil //message
+	if err := row.Scan(&authId, &timeStr, &message.Content); err != nil {
+		return nil
 	}
 	message.CreatedAt, _ = time.Parse(time.DateTime, timeStr[:19])
+	message.Author = *m.GetAuthorById(authId)
 	return message
+}
+
+func (m *MessageDB) GetAllMessages() []*Message {
+	rows, err := m.db.Query(
+		`SELECT AuthorId, CreatedAt, Content
+         FROM messages
+		 ORDER BY CreatedAt DESC`,
+	)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	messages := make([]*Message, 0)
+	timeStr := ""
+	for rows.Next() {
+		message := &Message{}
+		if err := rows.Scan(&message.Author.id, &timeStr, &message.Content); err != nil {
+			return nil
+		}
+		message.CreatedAt, _ = time.Parse(time.DateTime, timeStr[:19])
+		message.Author = *m.GetAuthorById(message.Author.id)
+		messages = append(messages, message)
+	}
+	return messages
 }
 
 func (m *MessageDB) Insert(authorName string, content string) int64 {
@@ -104,14 +129,14 @@ func (m *MessageDB) InsertAuthor(author *Author) (id int64) {
 }
 
 func (m *MessageDB) InsertMessage(message *Message) (id int64) {
-	if message.Content == "" || message.AuthorId <= 0 {
+	if message == nil || message.Content == "" || message.Author.id <= 0 {
 		return ErrWrongData
 	}
 	row := m.db.QueryRow(
 		`INSERT INTO messages (AuthorId, CreatedAt, Content)  
          VALUES (?,?,?)
          RETURNING Id`,
-		message.AuthorId,
+		message.Author.id,
 		time.Now(),
 		message.Content)
 	if row.Scan(&id) != nil {
@@ -119,10 +144,3 @@ func (m *MessageDB) InsertMessage(message *Message) (id int64) {
 	}
 	return
 }
-
-// func timeformat(t time.Time) string {
-// 	if t.IsZero() {
-// 		return ""
-// 	}
-// 	return t.Format("02 Jan 2006 15:04")
-// }

@@ -1,4 +1,4 @@
-package dbservice
+package dbprovider
 
 import (
 	"database/sql"
@@ -20,24 +20,47 @@ func NewSqliteDbService(dbFileName string, createQuery string) *sqliteDbService 
 }
 
 func (s *sqliteDbService) OpenDB() (db *sql.DB, err error) {
-	_, err = os.Stat(s.dbFileName)
-	if err != nil {
+	if err = s.ExistsDB(); err != nil {
 		if !os.IsNotExist(err) {
 			return nil, err
 		}
-		file, err := os.Create(s.dbFileName)
+		err = s.CreateDB()
 		if err != nil {
 			return nil, err
 		}
-		file.Close()
 	}
 	db, err = sql.Open("sqlite", s.dbFileName)
 	if err == nil {
 		err = db.Ping()
 		if err == nil {
-			_, err = db.Exec(s.createQuery)
 			return db, err
 		}
 	}
 	return nil, err
+}
+
+func (s *sqliteDbService) ExistsDB() error {
+	_, err := os.Stat(s.dbFileName)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *sqliteDbService) CreateDB() error {
+	file, err := os.Create(s.dbFileName)
+	if err != nil {
+		return err
+	}
+	file.Close()
+	db, err := sql.Open("sqlite", s.dbFileName)
+	defer db.Close()
+	if err == nil {
+		err = db.Ping()
+		if err == nil {
+			_, err = db.Exec(s.createQuery)
+			return err
+		}
+	}
+	return err
 }

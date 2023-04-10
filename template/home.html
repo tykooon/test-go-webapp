@@ -1,20 +1,13 @@
-{{define "title"}}Homepage{{end}}
+{{define "title"}}Home{{end}}
 {{define "scripts"}}{{end}}
 {{define "body"}}
-  <h2 class="my-3"> Messages</h2>
-  <ul>
-    {{range $i, $message := .}}
-      <li class="list-group-item">
-        <blockquote>
-          <p>
-            "{{$message.Content}}"
-          </p>
-          <cite>
-            from {{$message.AuthorId}} at {{ timeformat $message.CreatedAt}}
-          </cite>
-        </blockquote>   
-      </li>
-    {{end}}
-  </ul>
-</div>
+  <h2 class="my-3"> Welcome!</h2>
+  <p>This is my personal public messenger, were anyone can <a href="/send">send</a>
+    me a message or <a href="/messages">view</a> all the messages sent to me through this site.
+  </p>
+
+  <p>Please, notice that this webapp is running in testing mode,
+    therefore every restart leads to recreating message database.
+    Don't try to keep here any important information :).
+  </p>
 {{end}}

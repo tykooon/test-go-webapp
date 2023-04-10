@@ -1,0 +1,20 @@
+{{define "title"}}Messages{{end}}
+{{define "scripts"}}{{end}}
+{{define "body"}}
+  <h2 class="my-3"> Messages</h2>
+  <ul>
+    {{range $i, $message := .}}
+      <li class="list-group-item">
+        <blockquote>
+          <p>
+            "{{$message.Content}}"
+          </p>
+          <figcaption>
+            &mdash; from <cite>{{$message.Author.Name}}</cite> at {{ timeformat $message.CreatedAt}}
+          </figcaption>
+        </blockquote>   
+      </li>
+    {{end}}
+  </ul>
+</div>
+{{end}}

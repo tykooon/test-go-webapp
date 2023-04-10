@@ -6,22 +6,37 @@
     <meta name="google" value="notranslate" />
     <title>{{ template "title" . }}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-      <style>
-      body {
-      padding-bottom: 20px;
-      padding-top: 50px;
-      background-color: lightgray;
-      }
-      .body-content {
-      padding-left: 15px;
-      padding-right: 15px;
-      }
-    </style>
+    <link rel="stylesheet" href="/files/css/site.css">
   </head>
   <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary" id="top-nav-bar">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">AT</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" id="home-nav-item" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="send-nav-item" href="/send">Send</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="messages-nav-item" href="/messages">Messages</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Under Construction</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
     <div class="container body-content">
       {{ template "body" . }}
     </div>
     {{- template "scripts" -}}
+    <script src="/files/js/site.js"></script>
   </body>
 </html>
