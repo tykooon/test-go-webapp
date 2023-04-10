@@ -1,0 +1,1 @@
+This folder contains .db file for testing app with sqlite driver.
