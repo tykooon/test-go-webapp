@@ -20,47 +20,34 @@ func NewSqliteDbService(dbFileName string, createQuery string) *sqliteDbService 
 }
 
 func (s *sqliteDbService) OpenDB() (db *sql.DB, err error) {
-	if err = s.ExistsDB(); err != nil {
-		if !os.IsNotExist(err) {
-			return nil, err
+	if _, err = os.Stat(s.dbFileName); err != nil {
+		if os.IsNotExist(err) {
+			err = s.CreateDBFile()
+			if err == nil {
+				db, err = s.OpenAndPing()
+				if err == nil {
+					_, err = db.Exec(s.createQuery)
+				}
+			}
 		}
-		err = s.CreateDB()
-		if err != nil {
-			return nil, err
-		}
+	} else {
+		db, err = s.OpenAndPing()
 	}
+	return db, err
+}
+
+func (s *sqliteDbService) CreateDBFile() error {
+	file, err := os.Create(s.dbFileName)
+	if err == nil {
+		file.Close()
+	}
+	return err
+}
+
+func (s *sqliteDbService) OpenAndPing() (db *sql.DB, err error) {
 	db, err = sql.Open("sqlite", s.dbFileName)
 	if err == nil {
 		err = db.Ping()
-		if err == nil {
-			return db, err
-		}
 	}
-	return nil, err
-}
-
-func (s *sqliteDbService) ExistsDB() error {
-	_, err := os.Stat(s.dbFileName)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *sqliteDbService) CreateDB() error {
-	file, err := os.Create(s.dbFileName)
-	if err != nil {
-		return err
-	}
-	file.Close()
-	db, err := sql.Open("sqlite", s.dbFileName)
-	defer db.Close()
-	if err == nil {
-		err = db.Ping()
-		if err == nil {
-			_, err = db.Exec(s.createQuery)
-			return err
-		}
-	}
-	return err
+	return db, err
 }
