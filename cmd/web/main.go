@@ -11,13 +11,20 @@ import (
 )
 
 const DbFileName = "sql/messages.db"
+const sqlDictPath = "pkg/messagedb/SqlDictionaries/sqliteDict.json" // Path to JSON dictionary of SQL queries for messageDb
 
 func main() {
 	logger := log.New(os.Stdout, "APP LOG :", log.Lshortfile)
 
 	port := GetPortFromEnviron()
 
-	dbservice := dbprovider.NewSqliteDbService(DbFileName, createQuery)
+	dict, err := messagedb.SqlDictionaryFromJson(sqlDictPath)
+	if err != nil {
+		logger.Fatal("Sorry. Failed to load SQL Query Dictionary... ", err.Error())
+		return
+	}
+
+	dbservice := dbprovider.NewSqliteDbService(DbFileName, dict["create_query"])
 
 	db, err := dbservice.OpenDB()
 	if err != nil {
@@ -26,7 +33,7 @@ func main() {
 	}
 	defer db.Close()
 
-	mdb := messagedb.NewMessageDB(db)
+	mdb := messagedb.NewMessageDB(db, dict)
 	app := webappmodel.NewApp(logger, mdb)
 
 	err = http.ListenAndServe(":"+port, app.Routes())
@@ -37,9 +44,9 @@ func GetPortFromEnviron() (port string) {
 	port = os.Getenv("PORT")
 	if port == "" {
 		port = "5000"
-		// TODO Only for local test
-		//             Replace with
-		//logger.Fatal("Error: port must be set")
+		// TODO `port = "5000"` --- only for local test
+		//            In realize replace with
+		//	logger.Fatal("Error: port must be set")
 	}
 	return
 }

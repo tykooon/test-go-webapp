@@ -45,7 +45,7 @@ func (s *sqliteDbService) CreateDBFile() error {
 }
 
 func (s *sqliteDbService) OpenAndPing() (db *sql.DB, err error) {
-	db, err = sql.Open("sqlite", s.dbFileName)
+	db, err = sql.Open("sqlite", s.dbFileName+"?parseTime=true")
 	if err == nil {
 		err = db.Ping()
 	}

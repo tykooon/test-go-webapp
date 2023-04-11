@@ -1,0 +1,9 @@
+{
+    "create_query": "DROP TABLE IF EXISTS Authors; CREATE TABLE IF NOT EXISTS Authors( Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, Name TEXT NOT NULL, CreatedAt DATETIME); DROP TABLE IF EXISTS Messages; CREATE TABLE IF NOT EXISTS Messages( Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, AuthorId INTEGER NOT NULL, CreatedAt DATETIME, Content TEXT NOT NULL);",
+    "author_by_name":"SELECT Id FROM authors WHERE name =?;",
+    "author_by_id":"SELECT Name, CreatedAt FROM authors WHERE id =?;",
+    "message_by_id":"SELECT AuthorId, CreatedAt, Content FROM messages WHERE id =?;",
+    "all_messages":"SELECT AuthorId, CreatedAt, Content FROM messages ORDER BY CreatedAt DESC;",
+    "insert_author":"INSERT INTO authors (Name, CreatedAt) VALUES (?, DATETIME('now','utc')) RETURNING Id",
+    "insert_message":"INSERT INTO messages (AuthorId, CreatedAt, Content) VALUES (?,DATETIME('now','utc'),?) RETURNING Id"
+}
