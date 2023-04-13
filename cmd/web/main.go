@@ -6,35 +6,25 @@ import (
 	"os"
 
 	"github.com/tykooon/test-go-webapp/dbprovider"
-	"github.com/tykooon/test-go-webapp/pkg/messagedb"
 	"github.com/tykooon/test-go-webapp/webappmodel"
 )
-
-const DbFileName = "sql/messages.db"
-const sqlDictPath = "pkg/messagedb/SqlDictionaries/sqliteDict.json" // Path to JSON dictionary of SQL queries for messageDb
 
 func main() {
 	logger := log.New(os.Stdout, "APP LOG :", log.Lshortfile)
 
 	port := GetPortFromEnviron()
 
-	dict, err := messagedb.SqlDictionaryFromJson(sqlDictPath)
-	if err != nil {
-		logger.Fatal("Sorry. Failed to load SQL Query Dictionary... ", err.Error())
-		return
-	}
+	dbservice := dbprovider.NewMysqlDbService(MysqlConnectionString, DbSchemaName)
+	//dbservice := dbprovider.NewSqliteDbService(DbFileName, SqliteCreateQuery)
 
-	dbservice := dbprovider.NewSqliteDbService(DbFileName, dict["create_query"])
-
-	db, err := dbservice.OpenDB()
+	err := dbservice.OpenDB()
 	if err != nil {
 		logger.Fatal("Sorry. Failed to open Database... ", err.Error())
 		return
 	}
-	defer db.Close()
+	defer dbprovider.CloseDB(dbservice)
 
-	mdb := messagedb.NewMessageDB(db, dict)
-	app := webappmodel.NewApp(logger, mdb)
+	app := webappmodel.NewApp(logger, dbservice)
 
 	err = http.ListenAndServe(":"+port, app.Routes())
 	app.Log.Fatal(err)

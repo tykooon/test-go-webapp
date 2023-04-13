@@ -5,7 +5,7 @@ import (
 )
 
 type Message struct {
-	id        int64     //`json:"-"`
+	Id        int64     //`json:"-"`
 	Author    Author    `json:"author,omitempty"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	Content   string    `json:"content,omitempty"`
@@ -20,5 +20,5 @@ func NewMessage(author *Author, content string) *Message {
 }
 
 func (m *Message) GetId() int64 {
-	return m.id
+	return m.Id
 }
