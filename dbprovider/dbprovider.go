@@ -2,6 +2,7 @@ package dbprovider
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/tykooon/test-go-webapp/pkg/messagedb"
 )
@@ -36,4 +37,31 @@ func CloseDB(p DbProvider) error {
 		return nil
 	}
 	return p.DB().Close()
+}
+
+func NewDbService(serviceName string, paramDict map[string]string) (DbProvider, error) {
+	switch serviceName {
+	case "sqlite":
+		arg1, ok1 := paramDict["dbfilename"]
+		arg2, ok2 := paramDict["createquery"]
+		fmt.Println(paramDict, arg1, arg2)
+		if ok1 && ok2 {
+			return NewSqliteDbService(arg1, arg2), nil
+		}
+	case "mysql":
+		arg1, ok1 := paramDict["connectionurl"]
+		arg2, ok2 := paramDict["dbschema"]
+		if ok1 && ok2 {
+			return NewMysqlDbService(arg1, arg2), nil
+		}
+	// case "postgres":
+	// 	arg1, ok1 := dict["connectionUrl"]
+	// 	arg2, ok2 := dict["dbSchema"]
+	// 	if ok1 && ok2 {
+	// 		return NewPostgreDbService(arg1, arg2), nil
+	// 	}
+	default:
+		return nil, fmt.Errorf("bad service name: %s", serviceName)
+	}
+	return nil, fmt.Errorf("bad config data for: %s", serviceName)
 }
