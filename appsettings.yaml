@@ -1,5 +1,5 @@
 # Application configuration
-dbType: sqlite
+dbType: postgres
 dbProfiles:
   sqlite:
     dbFileName: ./sql/messages.db
@@ -18,3 +18,6 @@ dbProfiles:
   mysql:
     dbSchema: heroku_d869720877b7819
     connectionUrl: b20b350404308e:1cef0188@tcp(eu-cdbr-west-03.cleardb.net)/heroku_d869720877b7819
+  postgres:
+    dbSchema: dbo
+    connectionUrl: user=postgres password=dljaPG1 dbname=test-go-webapp sslmode=disable

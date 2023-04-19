@@ -54,12 +54,12 @@ func NewDbService(serviceName string, paramDict map[string]string) (DbProvider, 
 		if ok1 && ok2 {
 			return NewMysqlDbService(arg1, arg2), nil
 		}
-	// case "postgres":
-	// 	arg1, ok1 := dict["connectionUrl"]
-	// 	arg2, ok2 := dict["dbSchema"]
-	// 	if ok1 && ok2 {
-	// 		return NewPostgreDbService(arg1, arg2), nil
-	// 	}
+	case "postgres":
+		arg1, ok1 := paramDict["connectionurl"]
+		arg2, ok2 := paramDict["dbschema"]
+		if ok1 && ok2 {
+			return NewPgsqlDbService(arg1, arg2), nil
+		}
 	default:
 		return nil, fmt.Errorf("bad service name: %s", serviceName)
 	}
